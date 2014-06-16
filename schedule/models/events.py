@@ -22,6 +22,7 @@ from schedule.utils import OccurrenceReplacer
 
 from apps.tags.models import Tag
 from apps.locations.models import Location
+from apps.sponsor.models import Sponsor
 
 
 class EventManager(models.Manager):
@@ -69,6 +70,7 @@ class Event(models.Model):
     locations = models.ForeignKey(Location, verbose_name=_("Location"))
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
     sponsor_text = models.TextField(_("sponsor text"), blank=True)
+    sponsors = models.ManyToManyField(Sponsor, blank=True, verbose_name=_("Sponsors"))
 
     objects = EventManager()
 
