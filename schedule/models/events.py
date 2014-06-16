@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+from decimal import Decimal
+from django import forms
 from django.conf import settings as django_settings
 import pytz
 from dateutil import rrule
 
 from django.contrib.contenttypes import generic
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
@@ -17,10 +20,30 @@ from schedule.models.rules import Rule
 from schedule.models.calendars import Calendar
 from schedule.utils import OccurrenceReplacer
 
+from apps.tags.models import Tag
+from apps.locations.models import Location
+
 
 class EventManager(models.Manager):
     def get_for_object(self, content_object, distinction=None, inherit=True):
         return EventRelation.objects.get_events_for_object(content_object, distinction, inherit)
+
+
+
+class Category(models.Model):
+    '''
+    This model stores meta data for a category of event.
+    '''
+    name = models.CharField(_('category'),max_length=255, unique=True)
+
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+        app_label = "schedule"
+        ordering = ('name',)
+
+    def __unicode__(self):
+            return u'{}'.format(self.name)
 
 
 class Event(models.Model):
@@ -41,6 +64,12 @@ class Event(models.Model):
     end_recurring_period = models.DateTimeField(_("end recurring period"), null=True, blank=True,
                                                 help_text=_("This date is ignored for one time only events."))
     calendar = models.ForeignKey(Calendar, null=True, blank=True, verbose_name=_("calendar"))
+    admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    tags = models.ManyToManyField(Tag, blank=True, verbose_name=_("Tags"))
+    locations = models.ForeignKey(Location, verbose_name=_("Location"))
+    category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
+    sponsor_text = models.TextField(_("sponsor text"), blank=True)
+
     objects = EventManager()
 
     class Meta:
