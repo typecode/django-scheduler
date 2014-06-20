@@ -63,13 +63,12 @@ class Migration(SchemaMigration):
         u'locations.location': {
             'Meta': {'object_name': 'Location'},
             'city': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
-            'coordinats': ('apps.snippets.ListField.ListField', [], {}),
             'country': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'position': ('geoposition.fields.GeopositionField', [], {'max_length': '42', 'null': 'True'}),
             'state': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'street': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
+            'trail': ('apps.locations.fields.TrailField', [], {}),
             'zip': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'})
         },
         'schedule.calendar': {
