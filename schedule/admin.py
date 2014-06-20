@@ -51,7 +51,7 @@ class RuleForm(forms.ModelForm):
                         (6, 'Saturday'))
 
 
-    CHOISES_PATTERN = ((0, 'Daily'), (2, 'Weekly'), (3, 'Monthly'), (4, 'Yearly'))
+    CHOISES_PATTERN = ((3, 'Daily'), (2, 'Weekly'), (1, 'Monthly'), (0, 'Yearly'))
     CHOISES_RANGE_YEAR = ((i,'%s'%i)for i  in xrange(1,13))
     CHOISES_RANGE_MONTHLY = ([(i,'%s'%i)for i  in xrange(1,13)])
     CHOISES_RANGE_WEEKLY = ((i,'%s'%i)for i  in xrange(1,53))
@@ -84,9 +84,10 @@ class RuleForm(forms.ModelForm):
                             (2, 'THIRD',),
                             (3, 'FOURTH',))
 
-    pattern = forms.ChoiceField(widget=forms.RadioSelect(attrs={'onchange':'onchange_handler()'}),
+    pattern = forms.ChoiceField(widget=forms.RadioSelect(),#attrs={'onchange':'onchange_handler()',}),
                                 choices=CHOISES_PATTERN,
-                                label='Recurrence pattern')
+                                label='Recurrence pattern',
+                                )
 
     WEEKLY_WEEKDAYS = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
                                          choices=CHOISES_WEEKDAYS,
@@ -94,20 +95,23 @@ class RuleForm(forms.ModelForm):
                                          required=False)
 
     every_weekday = forms.ChoiceField(widget=forms.RadioSelect,
-                                    choices=(('Every day', 'Every day',),
-                                             ))
+                                    choices=(('Every day', 'Every day'),),
+                                             required=False)
 
     daily_range = forms.ChoiceField(widget=forms.Select(attrs={'style':'width:100%'}),
                                     choices=CHOISES_RANGE_DAYS,
-                                    label='Repeat Every day(s)')
+                                    label='Repeat Every day(s)',
+                                    required=False)
 
     yearly_range = forms.ChoiceField(widget=forms.Select(attrs={'style':'width:100%'}),
                                      choices=CHOISES_RANGE_YEAR,
-                                     label='Repeat every')
+                                     label='Repeat every',
+                                     required=False)
 
     X_range = forms.ChoiceField(widget=forms.Select(attrs={'style':'width:100%'}),
                                 choices=CHOICE_NUMBERAL_DAYS,
-                                label='On the')
+                                label='On the',
+                                required=False)
 
     monthly_range = forms.ChoiceField(widget=forms.Select(attrs={'style':'width:100%'}),
                                       choices=CHOICES_MONTH,
@@ -124,12 +128,12 @@ class RuleForm(forms.ModelForm):
                                         label='',
                                         required=False)
 
-    DAILY_repeat_days = forms.ChoiceField(widget=forms.Select(attrs={'style':'width:50pxd'}),
+    DAILY_repeat_days = forms.ChoiceField(widget=forms.Select(attrs={'style':'width:50px'}),
                                            choices=CHOISES_RANGE_DAYS,
                                            label='Every',
                                            required=False)
 
-    DAILY_options = forms.ChoiceField(widget=forms.RadioSelect(attrs={'onchange':'onchange_daily()'}),
+    DAILY_options = forms.ChoiceField(widget=forms.RadioSelect,
                                     choices=CHOICE_EVERY_DAY,
                                     label='Options',
                                     required=False,
@@ -140,7 +144,7 @@ class RuleForm(forms.ModelForm):
                                            label='Repeat every weekday',
                                            required=False)
 
-    MONTHLY_radio = forms.ChoiceField(widget=forms.RadioSelect(attrs={'onchange':'onchange_monthly()'}),
+    MONTHLY_radio = forms.ChoiceField(widget=forms.RadioSelect,
                                       choices=CHOICES_MONTLY,
                                       label='Chose type of date',
                                       required=False)
@@ -164,7 +168,7 @@ class RuleForm(forms.ModelForm):
                                       label='of every',
                                       required=False)
 
-    RADIO_yearly = forms.ChoiceField(widget=forms.RadioSelect(attrs={'onchange':'onchange_yearly()'}),
+    RADIO_yearly = forms.ChoiceField(widget=forms.RadioSelect,
                                       choices=CHOICES_YEARLY,
                                       label='Chose type of date',
                                       required=False,
@@ -205,15 +209,15 @@ class RuleAdmin(admin.ModelAdmin):
     form = RuleForm
     fieldsets = (
         (None, {
-            'fields': (('name','description',),
+            'fields': ('name','description',
                        ('pattern',),
                         # DAILY
                        'DAILY_options', 'DAILY_repeat_days',
 
                         #WEEKLY
-
-                       'WEEKLY_WEEKDAYS',
                        'WEEKLY_select_range',
+                       'WEEKLY_WEEKDAYS',
+
 
                         # MONTHLY
 
@@ -232,7 +236,6 @@ class RuleAdmin(admin.ModelAdmin):
 
         }),
 )
-
 
 # admin.site.register(Calendar, CalendarAdminOptions)
 admin.site.register(Rule, RuleAdmin)
