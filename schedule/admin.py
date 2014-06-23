@@ -31,7 +31,7 @@ class ModelInline(admin.StackedInline):#generic.GenericStackedInline):
 
 class EventAdmin(admin.ModelAdmin):
     model = Event
-    fields = ('category', 'title', 'description', 'locations', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text')
+    fields = ('category', 'title', 'description', 'locations', 'media', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text')
     list_filter = (EventsFilter,)
 
 

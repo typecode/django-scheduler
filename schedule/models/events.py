@@ -20,6 +20,7 @@ from schedule.models.rules import Rule
 from schedule.models.calendars import Calendar
 from schedule.utils import OccurrenceReplacer
 
+from apps.media.models import MediaItem
 from apps.tags.models import Tag
 from apps.locations.models import Location
 from apps.sponsor.models import Sponsor
@@ -44,7 +45,7 @@ class Category(models.Model):
         ordering = ('name',)
 
     def __unicode__(self):
-            return u'{}'.format(self.name)
+        return u'{}'.format(self.name)
 
 
 class Event(models.Model):
@@ -71,6 +72,8 @@ class Event(models.Model):
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
     sponsor_text = models.TextField(_("sponsor text"), blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True, verbose_name=_("Sponsors"))
+    media = models.ForeignKey(MediaItem, verbose_name=_("Media"), null=True, blank=True)
+
 
     objects = EventManager()
 
