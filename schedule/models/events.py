@@ -23,7 +23,7 @@ from schedule.utils import OccurrenceReplacer
 from apps.media.models import MediaItem
 from apps.tags.models import Tag
 from apps.locations.models import Location
-from apps.sponsor.models import Sponsor
+from apps.sponsors.models import Sponsor
 
 
 class EventManager(models.Manager):

@@ -13,7 +13,7 @@ class Migration(SchemaMigration):
         db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('event', models.ForeignKey(orm['schedule.event'], null=False)),
-            ('sponsor', models.ForeignKey(orm[u'sponsor.sponsor'], null=False))
+            ('sponsor', models.ForeignKey(orm[u'sponsors.sponsor'], null=False))
         ))
         db.create_unique(m2m_table_name, ['event_id', 'sponsor_id'])
 
@@ -105,7 +105,7 @@ class Migration(SchemaMigration):
             'locations': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['locations.Location']"}),
             'rule': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['schedule.Rule']", 'null': 'True', 'blank': 'True'}),
             'sponsor_text': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'sponsors': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['sponsor.Sponsor']", 'symmetrical': 'False', 'blank': 'True'}),
+            'sponsors': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['sponsors.Sponsor']", 'symmetrical': 'False', 'blank': 'True'}),
             'start': ('django.db.models.fields.DateTimeField', [], {}),
             'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['tags.Tag']", 'symmetrical': 'False', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
@@ -141,7 +141,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'params': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
         },
-        u'sponsor.sponsor': {
+        u'sponsors.sponsor': {
             'Meta': {'object_name': 'Sponsor'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
