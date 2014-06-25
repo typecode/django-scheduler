@@ -53,7 +53,8 @@ class Event(models.Model):
     This model stores meta data for a date.  You can relate this data to many
     other models.
     '''
-    start = models.DateTimeField(_("start"))
+    start = models.DateTimeField(_("start"), help_text=_("For a recurring event,"
+                                                         " please enter the date and time of the first occurrence."))
     end = models.DateTimeField(_("end"), help_text=_("The end time must be later than the start time."))
     title = models.CharField(_("title"), max_length=255)
     description = models.TextField(_("description"), null=True, blank=True)
