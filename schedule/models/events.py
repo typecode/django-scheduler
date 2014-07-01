@@ -21,7 +21,6 @@ from schedule.models.rules import Rule
 from schedule.models.calendars import Calendar
 from schedule.utils import OccurrenceReplacer
 
-from apps.media.models import MediaItem
 from apps.tags.models import Tag
 from apps.locations.models import Location
 from apps.sponsors.models import Sponsor
