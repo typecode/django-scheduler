@@ -2,6 +2,7 @@
 from decimal import Decimal
 from django import forms
 from django.conf import settings as django_settings
+from filer.fields.image import FilerImageField
 import pytz
 from dateutil import rrule
 
@@ -73,8 +74,7 @@ class Event(models.Model):
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
     sponsor_text = models.TextField(_("sponsor text"), blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True, verbose_name=_("Sponsors"))
-    media = models.ForeignKey(MediaItem, verbose_name=_("Media"), null=True, blank=True)
-
+    media = FilerImageField(null=True)
 
     objects = EventManager()
 
