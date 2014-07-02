@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from schedule.models import Event, Rule, Category
 from datetime import datetime
+from django import forms
+from schedule.forms import EventForm, SpanForm
 
 # class CalendarAdminOptions(admin.ModelAdmin):
 #     prepopulated_fields = {"slug": ("name",)}
@@ -25,15 +27,22 @@ class ModelInline(admin.StackedInline):
     model = Rule
     # fields = ('name',)
 
+class EventAdminForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        exclude = ('creator', 'created_on', 'calendar')
+    class Media:
+        js = (
+            '/static/scripts/admin/schedule_event.js',
+        )
+
 
 class EventAdmin(admin.ModelAdmin):
     model = Event
+    form = EventAdminForm
 
     fields = ('category', 'title', 'description', 'locations', 'image', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text')
     list_filter = (EventsFilter,)
-
-
-from django import forms
 
 
 class RuleForm(forms.ModelForm):

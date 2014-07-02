@@ -67,7 +67,8 @@ class Event(models.Model):
     end_recurring_period = models.DateTimeField(_("end recurring period"), null=True, blank=True,
                                                 help_text=_("This date is ignored for one time only events."))
     calendar = models.ForeignKey(Calendar, null=True, blank=True, verbose_name=_("calendar"))
-    admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2,
+                                          validators=[MinValueValidator(Decimal('0.00'))], help_text=_("USD"))
     tags = models.ManyToManyField(Tag, blank=True, verbose_name=_("Tags"))
     locations = models.ForeignKey(Location, verbose_name=_("Location"))
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
