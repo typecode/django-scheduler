@@ -73,7 +73,7 @@ class Event(models.Model):
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
     sponsor_text = models.TextField(_("sponsor text"), blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True, verbose_name=_("Sponsors"))
-    media = FilerImageField(null=True)
+    image = FilerImageField(null=True)
 
     objects = EventManager()
 
