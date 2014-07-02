@@ -43,6 +43,7 @@ class EventAdmin(admin.ModelAdmin):
 
     fields = ('category', 'title', 'description', 'locations', 'image', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text')
     list_filter = (EventsFilter,)
+    ordering = ('-start',)
 
 
 class RuleForm(forms.ModelForm):
