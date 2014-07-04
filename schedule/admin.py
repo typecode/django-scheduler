@@ -1,9 +1,11 @@
 from django.contrib import admin
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from schedule.models import Event, Rule, Category
 from datetime import datetime
 from django import forms
 from schedule.forms import EventForm, SpanForm
+from datetime import datetime
 
 # class CalendarAdminOptions(admin.ModelAdmin):
 #     prepopulated_fields = {"slug": ("name",)}
@@ -44,6 +46,13 @@ class EventAdmin(admin.ModelAdmin):
     fields = ('category', 'title', 'description', 'locations', 'image', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text')
     list_filter = (EventsFilter,)
     ordering = ('-start',)
+
+    def get_queryset(self, request):
+        now = datetime.now()
+        qs = Event.objects.filter(Q(Q(start__lte=now), Q(rule__isnull=False), Q(end_recurring_period__isnull=True)) |
+                                  Q(start__gte=now) |
+                                  Q(end_recurring_period__gt=now)).order_by('-start')
+        return qs
 
 
 class RuleForm(forms.ModelForm):
