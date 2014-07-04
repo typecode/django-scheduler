@@ -47,7 +47,7 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = (EventsFilter,)
     ordering = ('-start',)
 
-    def get_queryset(self, request):
+    def queryset(self, request):
         now = datetime.now()
         qs = Event.objects.filter(Q(Q(start__lte=now), Q(rule__isnull=False), Q(end_recurring_period__isnull=True)) |
                                   Q(start__gte=now) |
