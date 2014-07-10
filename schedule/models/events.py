@@ -21,7 +21,7 @@ from schedule.models.rules import Rule
 from schedule.models.calendars import Calendar
 from schedule.utils import OccurrenceReplacer
 
-from apps.tags.models import Tag
+from taggit.managers import TaggableManager
 from apps.locations.models import Location
 from apps.sponsors.models import Sponsor
 
@@ -69,10 +69,8 @@ class Event(models.Model):
     calendar = models.ForeignKey(Calendar, null=True, blank=True, verbose_name=_("calendar"))
     admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2,
                                           validators=[MinValueValidator(Decimal('0.00'))], help_text=_("USD"))
-    tags = models.ManyToManyField(Tag, blank=True, verbose_name=_("Tags"))
-#    locations = models.ForeignKey(Location, verbose_name=_("Location"))
+    tags = TaggableManager(blank=True, verbose_name=_("Tags"))
     locations = models.ManyToManyField(Location, verbose_name=_("Location"))
-
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
     sponsor_text = models.TextField(_("sponsor text"), blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True, verbose_name=_("Sponsors"))
