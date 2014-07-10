@@ -19,13 +19,13 @@ class Migration(SchemaMigration):
                       keep_default=False)
 
         # Adding M2M table for field tags on 'Event'
-        m2m_table_name = db.shorten_name(u'schedule_event_tags')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('event', models.ForeignKey(orm['schedule.event'], null=False)),
-            ('tag', models.ForeignKey(orm[u'tags.tag'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['event_id', 'tag_id'])
+        # m2m_table_name = db.shorten_name(u'schedule_event_tags')
+        # db.create_table(m2m_table_name, (
+        #     ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+        #     ('event', models.ForeignKey(orm['schedule.event'], null=False)),
+        #     ('tag', models.ForeignKey(orm[u'tags.tag'], null=False))
+        # ))
+        # db.create_unique(m2m_table_name, ['event_id', 'tag_id'])
 
 
     def backwards(self, orm):
@@ -36,7 +36,7 @@ class Migration(SchemaMigration):
         db.delete_column(u'schedule_event', 'locations_id')
 
         # Removing M2M table for field tags on 'Event'
-        db.delete_table(db.shorten_name(u'schedule_event_tags'))
+        # db.delete_table(db.shorten_name(u'schedule_event_tags'))
 
 
     models = {
@@ -113,7 +113,7 @@ class Migration(SchemaMigration):
             'locations': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['locations.Location']"}),
             'rule': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['schedule.Rule']", 'null': 'True', 'blank': 'True'}),
             'start': ('django.db.models.fields.DateTimeField', [], {}),
-            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['tags.Tag']", 'symmetrical': 'False', 'blank': 'True'}),
+            # 'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['tags.Tag']", 'symmetrical': 'False', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
@@ -147,11 +147,11 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'params': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
         },
-        u'tags.tag': {
-            'Meta': {'ordering': "('text',)", 'object_name': 'Tag'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'text': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
-        }
+        # u'tags.tag': {
+        #     'Meta': {'ordering': "('text',)", 'object_name': 'Tag'},
+        #     u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+        #     'text': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '256'})
+        # }
     }
 
     complete_apps = ['schedule']
