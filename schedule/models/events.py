@@ -2,6 +2,7 @@
 from decimal import Decimal
 from django import forms
 from django.conf import settings as django_settings
+from filer.fields.image import FilerImageField
 import pytz
 from dateutil import rrule
 
@@ -20,9 +21,9 @@ from schedule.models.rules import Rule
 from schedule.models.calendars import Calendar
 from schedule.utils import OccurrenceReplacer
 
-from apps.tags.models import Tag
+from taggit.managers import TaggableManager
 from apps.locations.models import Location
-from apps.sponsor.models import Sponsor
+from apps.sponsors.models import Sponsor
 
 
 class EventManager(models.Manager):
@@ -44,7 +45,7 @@ class Category(models.Model):
         ordering = ('name',)
 
     def __unicode__(self):
-            return u'{}'.format(self.name)
+        return u'{}'.format(self.name)
 
 
 class Event(models.Model):
@@ -52,7 +53,8 @@ class Event(models.Model):
     This model stores meta data for a date.  You can relate this data to many
     other models.
     '''
-    start = models.DateTimeField(_("start"))
+    start = models.DateTimeField(_("start"), help_text=_("For a recurring event,"
+                                                         " please enter the date and time of the first occurrence."))
     end = models.DateTimeField(_("end"), help_text=_("The end time must be later than the start time."))
     title = models.CharField(_("title"), max_length=255)
     description = models.TextField(_("description"), null=True, blank=True)
@@ -65,12 +67,14 @@ class Event(models.Model):
     end_recurring_period = models.DateTimeField(_("end recurring period"), null=True, blank=True,
                                                 help_text=_("This date is ignored for one time only events."))
     calendar = models.ForeignKey(Calendar, null=True, blank=True, verbose_name=_("calendar"))
-    admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
-    tags = models.ManyToManyField(Tag, blank=True, verbose_name=_("Tags"))
-    locations = models.ForeignKey(Location, verbose_name=_("Location"))
+    admission_price = models.DecimalField('Admission Price', default=0, max_digits=10, decimal_places=2,
+                                          validators=[MinValueValidator(Decimal('0.00'))], help_text=_("USD"))
+    tags = TaggableManager(blank=True, verbose_name=_("Tags"))
+    locations = models.ManyToManyField(Location, verbose_name=_("Location"))
     category = models.ForeignKey('schedule.Category', verbose_name=_("Category"))
     sponsor_text = models.TextField(_("sponsor text"), blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True, verbose_name=_("Sponsors"))
+    image = FilerImageField(null=True)
 
     objects = EventManager()
 

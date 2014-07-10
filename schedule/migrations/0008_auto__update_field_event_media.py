@@ -8,19 +8,21 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding M2M table for field sponsors on 'Event'
-        m2m_table_name = db.shorten_name(u'schedule_event_sponsors')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('event', models.ForeignKey(orm['schedule.event'], null=False)),
-            ('sponsor', models.ForeignKey(orm[u'sponsors.sponsor'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['event_id', 'sponsor_id'])
+        # Deleting field 'Event.media'
+        db.delete_column(u'schedule_event', 'media_id')
+        # Adding field 'Event.media'
+        db.add_column(u'schedule_event', 'media',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['filer.Image'], null=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Removing M2M table for field sponsors on 'Event'
-        db.delete_table(db.shorten_name(u'schedule_event_sponsors'))
+        # Adding field 'Event.media'
+        db.add_column(u'schedule_event', 'media',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['media.MediaItem'], null=True, blank=True),
+                      keep_default=False)
+        # Deleting field 'Event.media'
+        db.delete_column(u'schedule_event', 'media_id')
 
 
     models = {
@@ -59,6 +61,50 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'filer.file': {
+            'Meta': {'object_name': 'File'},
+            '_file_size': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'folder': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'all_files'", 'null': 'True', 'to': "orm['filer.Folder']"}),
+            'has_all_mandatory_data': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'modified_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
+            'original_filename': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'owned_files'", 'null': 'True', 'to': u"orm['auth.User']"}),
+            'polymorphic_ctype': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'polymorphic_filer.file_set'", 'null': 'True', 'to': u"orm['contenttypes.ContentType']"}),
+            'sha1': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '40', 'blank': 'True'}),
+            'uploaded_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
+        },
+        'filer.folder': {
+            'Meta': {'ordering': "('name',)", 'unique_together': "(('parent', 'name'),)", 'object_name': 'Folder'},
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'lft': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'modified_at': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'filer_owned_folders'", 'null': 'True', 'to': u"orm['auth.User']"}),
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'children'", 'null': 'True', 'to': "orm['filer.Folder']"}),
+            'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
+            'uploaded_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
+        },
+        'filer.image': {
+            'Meta': {'object_name': 'Image', '_ormbases': ['filer.File']},
+            '_height': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            '_width': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'author': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'date_taken': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'default_alt_text': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'default_caption': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            u'file_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['filer.File']", 'unique': 'True', 'primary_key': 'True'}),
+            'must_always_publish_author_credit': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'must_always_publish_copyright': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'subject_location': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '64', 'null': 'True', 'blank': 'True'})
         },
         u'locations.location': {
             'Meta': {'object_name': 'Location'},
@@ -103,6 +149,7 @@ class Migration(SchemaMigration):
             'end_recurring_period': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'locations': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['locations.Location']"}),
+            'media': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['filer.Image']", 'null': 'True'}),
             'rule': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['schedule.Rule']", 'null': 'True', 'blank': 'True'}),
             'sponsor_text': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'sponsors': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['sponsors.Sponsor']", 'symmetrical': 'False', 'blank': 'True'}),
@@ -144,7 +191,8 @@ class Migration(SchemaMigration):
         u'sponsors.sponsor': {
             'Meta': {'object_name': 'Sponsor'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'image': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['filer.Image']", 'null': 'True', 'blank': 'True'}),
+            'on_footer': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'text': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})

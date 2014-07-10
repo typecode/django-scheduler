@@ -8,19 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding M2M table for field sponsors on 'Event'
-        m2m_table_name = db.shorten_name(u'schedule_event_sponsors')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('event', models.ForeignKey(orm['schedule.event'], null=False)),
-            ('sponsor', models.ForeignKey(orm[u'sponsors.sponsor'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['event_id', 'sponsor_id'])
+        # Adding field 'Event.media'
+        db.add_column(u'schedule_event', 'media',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['media.MediaItem'], null=True, blank=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Removing M2M table for field sponsors on 'Event'
-        db.delete_table(db.shorten_name(u'schedule_event_sponsors'))
+        # Deleting field 'Event.media'
+        db.delete_column(u'schedule_event', 'media_id')
 
 
     models = {
@@ -71,6 +67,13 @@ class Migration(SchemaMigration):
             'trail': ('apps.locations.fields.TrailField', [], {}),
             'zip': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'})
         },
+        u'media.mediaitem': {
+            'Meta': {'object_name': 'MediaItem'},
+            'caption': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
+            'credit': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
+            'file': ('django.db.models.fields.files.ImageField', [], {'max_length': '500'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
         'schedule.calendar': {
             'Meta': {'object_name': 'Calendar'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -103,9 +106,10 @@ class Migration(SchemaMigration):
             'end_recurring_period': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'locations': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['locations.Location']"}),
+            'media': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['media.MediaItem']", 'null': 'True', 'blank': 'True'}),
             'rule': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['schedule.Rule']", 'null': 'True', 'blank': 'True'}),
             'sponsor_text': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'sponsors': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['sponsors.Sponsor']", 'symmetrical': 'False', 'blank': 'True'}),
+            'sponsors': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['sponsor.Sponsor']", 'symmetrical': 'False', 'blank': 'True'}),
             'start': ('django.db.models.fields.DateTimeField', [], {}),
             'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['tags.Tag']", 'symmetrical': 'False', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
@@ -141,10 +145,11 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'params': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
         },
-        u'sponsors.sponsor': {
+        u'sponsor.sponsor': {
             'Meta': {'object_name': 'Sponsor'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'on_footer': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'text': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
