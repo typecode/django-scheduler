@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting field 'Event.media'
-        db.delete_column(u'schedule_event', 'media_id')
+        #db.delete_column(u'schedule_event', 'media_id')
         # Adding field 'Event.media'
         db.add_column(u'schedule_event', 'media',
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['filer.Image'], null=True),
@@ -18,9 +18,9 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Adding field 'Event.media'
-        db.add_column(u'schedule_event', 'media',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['media.MediaItem'], null=True, blank=True),
-                      keep_default=False)
+        # db.add_column(u'schedule_event', 'media',
+        #               self.gf('django.db.models.fields.related.ForeignKey')(to=orm['media.MediaItem'], null=True, blank=True),
+        #               keep_default=False)
         # Deleting field 'Event.media'
         db.delete_column(u'schedule_event', 'media_id')
 
