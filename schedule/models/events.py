@@ -25,18 +25,19 @@ from taggit.managers import TaggableManager
 from apps.locations.models import Location
 from apps.sponsors.models import Sponsor
 
+from cms.models import CMSPlugin
+
 
 class EventManager(models.Manager):
     def get_for_object(self, content_object, distinction=None, inherit=True):
         return EventRelation.objects.get_events_for_object(content_object, distinction, inherit)
 
 
-
 class Category(models.Model):
     '''
     This model stores meta data for a category of event.
     '''
-    name = models.CharField(_('category'),max_length=255, unique=True)
+    name = models.CharField(_('category'), max_length=255, unique=True)
 
     class Meta:
         verbose_name = 'Category'
@@ -470,3 +471,13 @@ class Occurrence(models.Model):
     def __eq__(self, other):
         return (isinstance(other, Occurrence) and
                 self.original_start == other.original_start and self.original_end == other.original_end)
+
+
+class EventPluginModel(CMSPlugin):
+    event = models.ForeignKey(Event)
+
+    def __unicode__(self):
+        return self.event.title
+
+    class Meta:
+        app_label = 'schedule'
