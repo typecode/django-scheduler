@@ -25,8 +25,6 @@ from taggit.managers import TaggableManager
 from apps.locations.models import Location
 from apps.sponsors.models import Sponsor
 
-from cms.models import CMSPlugin
-
 
 class EventManager(models.Manager):
     def get_for_object(self, content_object, distinction=None, inherit=True):
@@ -472,12 +470,3 @@ class Occurrence(models.Model):
         return (isinstance(other, Occurrence) and
                 self.original_start == other.original_start and self.original_end == other.original_end)
 
-
-class EventPluginModel(CMSPlugin):
-    event = models.ForeignKey(Event)
-
-    def __unicode__(self):
-        return self.event.title
-
-    class Meta:
-        app_label = 'schedule'
