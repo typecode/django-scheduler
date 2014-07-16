@@ -472,12 +472,3 @@ class Occurrence(models.Model):
         return (isinstance(other, Occurrence) and
                 self.original_start == other.original_start and self.original_end == other.original_end)
 
-
-# class EventPluginModel(CMSPlugin):
-#     event = models.ForeignKey(Event)
-#
-#     def __unicode__(self):
-#         return self.event.title
-#
-#     class Meta:
-#         app_label = 'schedule'
