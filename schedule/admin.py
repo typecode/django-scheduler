@@ -43,7 +43,7 @@ class EventAdmin(admin.ModelAdmin):
     model = Event
     form = EventAdminForm
 
-    fields = ('category', 'title', 'description', 'locations', 'image', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text')
+    fields = ('category', 'title', 'description', 'locations', 'image', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text', 'related_events')
     list_filter = (EventsFilter,)
     ordering = ('-start',)
 

@@ -76,6 +76,7 @@ class Event(models.Model):
     sponsor_text = models.TextField(_("sponsor text"), blank=True)
     sponsors = models.ManyToManyField(Sponsor, blank=True, verbose_name=_("Sponsors"))
     image = FilerImageField(null=True)
+    related_events = models.ManyToManyField('self', blank=True)
 
     objects = EventManager()
 
