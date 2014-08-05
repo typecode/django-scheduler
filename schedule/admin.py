@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from schedule.models import Event, Rule, Category
-from datetime import datetime
 from django import forms
-from schedule.forms import EventForm, SpanForm
 from datetime import datetime
 
 # class CalendarAdminOptions(admin.ModelAdmin):
@@ -13,16 +11,19 @@ from datetime import datetime
 
 class EventsFilter(admin.SimpleListFilter):
     title = 'Filter'
-    parameter_name = 'end'
+    parameter_name = 'gte'
 
     def lookups(self, request, model_admin):
         return (
-            ('gte', _('by datetime of next occurance'))
+            ('gte', _('by datetime of next occurance'),)
             ,)
 
     def queryset(self, request, queryset):
         if self.value() == 'gte':
-            return queryset.filter(end__gte=datetime.now())
+            now = datetime.now()
+            return queryset.filter(Q(Q(start__lte=now), Q(rule__isnull=False), Q(end_recurring_period__isnull=True)) |
+                                  Q(start__gte=now) |
+                                  Q(end_recurring_period__gt=now)).order_by('-start')
 
 
 class ModelInline(admin.StackedInline):
@@ -46,13 +47,6 @@ class EventAdmin(admin.ModelAdmin):
     fields = ('category', 'title', 'description', 'locations', 'image', 'admission_price', 'start', 'end', 'rule', 'end_recurring_period', 'tags', 'sponsors', 'sponsor_text', 'related_events')
     list_filter = (EventsFilter,)
     ordering = ('-start',)
-
-    def queryset(self, request):
-        now = datetime.now()
-        qs = Event.objects.filter(Q(Q(start__lte=now), Q(rule__isnull=False), Q(end_recurring_period__isnull=True)) |
-                                  Q(start__gte=now) |
-                                  Q(end_recurring_period__gt=now)).order_by('-start')
-        return qs
 
 
 class RuleForm(forms.ModelForm):
